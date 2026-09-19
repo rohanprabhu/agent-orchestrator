@@ -17,6 +17,7 @@ import (
 	"github.com/aoagents/agent-orchestrator/cloud/internal/githubapp"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/httpapi"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/idlepause"
+	"github.com/aoagents/agent-orchestrator/cloud/internal/linear"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/postgres"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/prstatus"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/reconcile"
@@ -278,6 +279,17 @@ func run(logger *slog.Logger) error {
 		}
 	}
 
+	var linearService *linear.Service
+	if os.Getenv("AO_CLOUD_LINEAR_CLIENT_ID") != "" {
+		linearService, err = linear.New(store, providerCipher, linear.Config{
+			ClientID: os.Getenv("AO_CLOUD_LINEAR_CLIENT_ID"), ClientSecret: os.Getenv("AO_CLOUD_LINEAR_CLIENT_SECRET"),
+			RedirectURL: os.Getenv("AO_CLOUD_LINEAR_REDIRECT_URL"), WebhookSecret: os.Getenv("AO_CLOUD_LINEAR_WEBHOOK_SECRET"),
+		})
+		if err != nil {
+			return err
+		}
+		go linearService.Run(ctx)
+	}
 	var githubService *githubapp.Service
 	if cfg.GitHub.Enabled() {
 		githubClient, err := githubapp.New(githubapp.Config{
@@ -374,6 +386,7 @@ func run(logger *slog.Logger) error {
 		return err
 	}
 	apiOptions := httpapi.Options{
+		Linear:                    linearService,
 		Store:                     store,
 		Transcripts:               store.SessionTranscripts(),
 		WorkOS:                    workosVerifier,

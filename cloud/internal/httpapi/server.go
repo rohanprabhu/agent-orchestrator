@@ -16,6 +16,7 @@ import (
 	"github.com/aoagents/agent-orchestrator/cloud/internal/auth"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/domain"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/githubapp"
+	"github.com/aoagents/agent-orchestrator/cloud/internal/linear"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/postgres"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/sandbox"
 	"github.com/aoagents/agent-orchestrator/cloud/internal/secrets"
@@ -132,6 +133,7 @@ type CheckoutBroker interface {
 }
 
 type Server struct {
+	linear           *linear.Service
 	store            Store
 	transcripts      TranscriptStore
 	workos           auth.WorkOSVerifier
@@ -176,6 +178,7 @@ type Server struct {
 }
 
 type Options struct {
+	Linear                    *linear.Service
 	Store                     Store
 	Transcripts               TranscriptStore
 	WorkOS                    auth.WorkOSVerifier
@@ -248,6 +251,7 @@ func New(options Options) *Server {
 		maxSandboxes = DefaultMaxSandboxesPerOrg
 	}
 	server := &Server{
+		linear:                    options.Linear,
 		store:                     options.Store,
 		transcripts:               options.Transcripts,
 		workos:                    options.WorkOS,
@@ -297,6 +301,19 @@ func New(options Options) *Server {
 	router.Use(server.requestID)
 	router.Use(server.requestLog)
 	router.Get("/healthz", server.health)
+	if server.linear != nil {
+		router.Get("/api/cloud/v1/linear/callback", server.linearCallback)
+		router.Post("/api/cloud/v1/linear/webhook", server.linearWebhook)
+		router.HandleFunc("/api/cloud/v1/linear/worker/{operation}", server.linearWorker)
+	}
+	router.Group(func(r chi.Router) {
+		r.Use(server.authenticate)
+		r.Get("/api/cloud/v1/orgs/{orgId}/linear", server.linearSettings)
+		r.Post("/api/cloud/v1/orgs/{orgId}/linear/connect", server.linearConnect)
+		r.Get("/api/cloud/v1/orgs/{orgId}/linear/projects", server.linearProjects)
+		r.Put("/api/cloud/v1/orgs/{orgId}/linear/profiles", server.linearProfile)
+		r.Delete("/api/cloud/v1/orgs/{orgId}/linear/profiles/{profileId}", server.linearDisconnect)
+	})
 	router.Get("/readyz", server.ready)
 	router.Get("/github/healthz", server.githubHealth)
 	if server.github != nil {

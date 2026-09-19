@@ -2579,3 +2579,35 @@ type MuteDeviceRequest struct {
 type InstallIDParam struct {
 	InstallID string `path:"installId" description:"The device's stable install id."`
 }
+
+// LinearRunnerResponse contains public runner metadata only; bearer credentials
+// stay in daemon-owned storage and never cross the renderer boundary.
+type LinearRunnerResponse struct {
+	ID          string    `json:"id"`
+	ProfileID   string    `json:"profileId"`
+	ProjectID   string    `json:"projectId"`
+	Challenge   string    `json:"challenge"`
+	Active      bool      `json:"active"`
+	LastContact time.Time `json:"lastContact"`
+	Error       string    `json:"error,omitempty"`
+}
+
+// LinearRunnersResponse lists the local Linear runner registrations.
+type LinearRunnersResponse struct {
+	Runners []LinearRunnerResponse `json:"runners"`
+}
+
+// PrepareLinearRunnerRequest selects the AO project for a new runner.
+type PrepareLinearRunnerRequest struct {
+	ProjectID string `json:"projectId"`
+}
+
+// ActivateLinearRunnerRequest identifies the hosted profile to verify.
+type ActivateLinearRunnerRequest struct {
+	ProfileID string `json:"profileId"`
+}
+
+// LinearRunnerIDParam identifies a local runner in a route.
+type LinearRunnerIDParam struct {
+	RunnerID string `path:"runnerId"`
+}

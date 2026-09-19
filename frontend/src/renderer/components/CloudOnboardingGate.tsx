@@ -50,10 +50,9 @@ export function CloudOnboardingGate() {
 		}
 	}, [signedIn, org, connections.isSuccess, connections.data, openDialog]);
 
-	if (!cloudEnabled) return null;
 	return (
 		<>
-			<CloudCredentialDialog />
+			{cloudEnabled && <CloudCredentialDialog />}
 			<CloudLocalSignInDialog />
 		</>
 	);

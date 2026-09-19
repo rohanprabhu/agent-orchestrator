@@ -1,4 +1,4 @@
-import { BadgeCheck, Bot, CircleHelp, Cloud, Globe2, Keyboard, RefreshCw, Settings2, Smartphone, type LucideIcon } from "lucide-react";
+import { Plug, BadgeCheck, Bot, CircleHelp, Cloud, Globe2, Keyboard, RefreshCw, Settings2, Smartphone, type LucideIcon } from "lucide-react";
 import { lazy, type ReactNode } from "react";
 import type { TFunction } from "i18next";
 import type { GlobalSettingsSection } from "../../stores/ui-store";
@@ -11,6 +11,7 @@ import { ConnectMobileContent } from "./ConnectMobileContent";
 import { GeneralSettingsSection } from "./GeneralSettingsSection";
 import { HarnessSettingsSection } from "./HarnessSettingsSection";
 import { KeyboardShortcutsContent } from "./KeyboardShortcutsContent";
+import { LinearIntegrationSection } from "./LinearIntegrationSection";
 import { MobileDevicesSection } from "./MobileDevicesSection";
 import { ReportProblemContent } from "./ReportProblemContent";
 import { SettingsSection } from "./SettingsSection";
@@ -67,6 +68,12 @@ const globalSettingsCatalog: SettingsCatalogItem[] = [
 				</div>
 			</>
 		),
+	},
+	{
+		id: "integrations",
+		icon: Plug,
+		label: (t) => t("settings.integrations"),
+		render: (_t, titleHidden) => <LinearIntegrationSection titleHidden={titleHidden} />,
 	},
 	{
 		id: "cloud",
