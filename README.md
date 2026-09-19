@@ -1,132 +1,88 @@
 <div align="center">
-  <img src="assets/ao-logo.svg" alt="Agent Orchestrator" width="144" height="144" />
 
-### Agent Orchestrator
+# 🐳 Lenticular
 
-#### Plan, run, and supervise coding agents from one place.
+**An Agent Orchestrator fork for local, agent-driven development.**
 
-[![GitHub stars](https://img.shields.io/github/stars/Untrivial-ai/agent-orchestrator?style=flat&logo=github)](https://github.com/Untrivial-ai/agent-orchestrator/stargazers)
-![Top 6k repositories](https://img.shields.io/badge/Top%206k%20repositories-181717?style=flat&logo=github&logoColor=white)
-[![GitHub release](https://img.shields.io/github/v/release/Untrivial-ai/agent-orchestrator?style=flat&logo=github)](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest)
-[![GitHub downloads](https://img.shields.io/github/downloads/Untrivial-ai/agent-orchestrator/total?style=flat&logo=github)](https://github.com/Untrivial-ai/agent-orchestrator/releases)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat)](LICENSE)
-[![X](https://img.shields.io/badge/@ao__build-555?style=flat&logo=x&logoColor=white)](https://x.com/ao_build)
-[![Discord](https://img.shields.io/badge/Discord-555?style=flat&logo=discord&logoColor=white)](https://discord.com/invite/UZv7JjxbwG)
+Plan with a project orchestrator. Run focused workers in isolated workspaces.<br />
+Follow implementation, validation, review, and merge from one desktop.
 
-Give every coding task its own agent, workspace, and feedback loop.<br />
-Plan and delegate larger outcomes with a project-aware orchestrator.<br />
-Follow every worker, pull request, CI run, and review in a live Kanban.
+[Get started](#get-started) &nbsp;&bull;&nbsp; [Linear integration](#delegate-from-linear) &nbsp;&bull;&nbsp; [Development guide](docs/development.md) &nbsp;&bull;&nbsp; [Upstream AO](https://github.com/Untrivial-ai/agent-orchestrator)
 
-[**Download AO**](#install) &nbsp;&bull;&nbsp; [Documentation](https://orchestrator.inc/docs) &nbsp;&bull;&nbsp; [Releases](https://github.com/Untrivial-ai/agent-orchestrator/releases) &nbsp;&bull;&nbsp; [Contributing](CONTRIBUTING.md) &nbsp;&bull;&nbsp; [Discord](https://discord.com/invite/UZv7JjxbwG)
-
-**English** · [简体中文](translations/README.zh-CN.md) · [日本語](translations/README.ja.md) · [한국어](translations/README.ko.md) · [Español](translations/README.es.md) · [Français](translations/README.fr.md) · [Deutsch](translations/README.de.md) · [Português (Brasil)](translations/README.pt-BR.md)
-
-<br />
-
-<img src="docs/assets/readme/hero.png" alt="Agent Orchestrator Kanban showing worker sessions grouped by live status" width="100%" />
+<img src="docs/assets/readme/lenticular-board.png" alt="Lenticular project board with Building, Validating, In review, and Ready lanes" width="100%" />
 </div>
 
-## A workspace for agent-driven development
+Lenticular builds on [Agent Orchestrator](https://github.com/Untrivial-ai/agent-orchestrator). This fork includes Lenticular branding, a refreshed home screen and project sidebar, updated task cards and browser controls, and an opt-in Linear integration that routes work to agents on your machine. The CLI and underlying daemon retain the `ao` name.
 
-One coding agent can handle a task. Running several across a project creates a different job: deciding what matters, splitting work cleanly, giving each agent the right context, preventing branch collisions, and following every change through review and merge.
+*Screenshots show the current renderer with built-in demo data. Browser preview does not run the desktop daemon or agents; Linear settings show the unconfigured service state.*
 
-AO is a local desktop workspace built for that job. Add a repository and create a worker session with the coding agent, model, and interface that fit the task. For Git-backed work, AO gives the worker its own branch and worktree. The task, conversation, terminal, changed files, browser preview, pull request, CI, and review state stay attached to that session from start to finish.
+## Get started
 
-Behind the desktop app, AO's local daemon watches agent activity and source-control state. The result is a shared, live view of the project instead of a collection of disconnected terminals, branches, and browser tabs.
+For the upstream AO desktop app, use [GitHub Releases](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest). The desktop app is the recommended install path and handles its own daemon and updates. Those upstream builds do not include this fork's custom changes.
 
-## Install
+To run Lenticular from this checkout, install the prerequisites and dependencies in the [development guide](docs/development.md), then launch the desktop:
 
-Download the latest AO desktop app for your platform. AO checks for updates automatically.
+```bash
+cd frontend
+npm run dev
+```
 
-| Platform              | Download                                                                                                                      |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| macOS (Apple silicon) | [Download](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest/download/agent-orchestrator-darwin-arm64.dmg)   |
-| macOS (Intel)         | [Download](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest/download/agent-orchestrator-darwin-x64.dmg)     |
-| Windows               | [Download](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest/download/agent-orchestrator-win32-x64.exe)      |
-| Linux (AppImage)      | [Download](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest/download/agent-orchestrator-linux-x64.AppImage) |
-| Linux (Debian/Ubuntu) | [Download](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest/download/agent-orchestrator-linux-x64.deb)      |
-| Linux (Fedora/RHEL)   | [Download](https://github.com/Untrivial-ai/agent-orchestrator/releases/latest/download/agent-orchestrator-linux-x64.rpm)      |
+From the home screen, **Clone from Git**, **Import an existing project**, or **Import a workspace folder**. Recent projects let you return to ongoing work. The sidebar keeps projects, their orchestrators, search, settings, and Connect Mobile within reach.
 
-Open Agent Orchestrator and point it at the repository you want AO to manage. The desktop app runs the daemon for you, so no CLI is required. See the [installation guide](https://orchestrator.inc/docs/installation) for agent CLI setup and troubleshooting.
+<img src="docs/assets/readme/lenticular-home.png" alt="Lenticular home screen with Git clone, project and workspace import, Connect Mobile, and recent projects" width="100%" />
 
-<img src="docs/assets/readme/tui.png" alt="Agent Orchestrator workspace showing a coding agent's native terminal UI" width="100%" />
+For a renderer-only preview with demo data, run `npm run dev:web` from `frontend/`. It does not launch Electron or execute agents.
 
 ## Workers execute focused tasks
 
-A worker is AO's unit of execution: one task, one coding agent, and one isolated workspace. Use **New task** when the work is already clear. Describe the outcome, choose an agent and model, attach relevant files, and work with the agent in structured Chat or its native terminal UI.
+A worker keeps one task, coding agent, and workspace together. Choose **Task** on a project board, describe the outcome, and select the agent, model, and supported interface. Git-backed workers get their own branch and worktree; Scratch workers use AO-managed branchless directories.
 
-Open a worker at any time to continue the conversation, attach to its terminal, inspect its changes, use its isolated browser, review its pull request, or send CI and review feedback back to the same agent. This makes each task independently understandable and keeps parallel work from collapsing into one shared context.
-
-<img src="docs/assets/readme/new-task.png" alt="Create a new task in Agent Orchestrator with an agent and model selected" width="100%" />
+Use structured Chat or the agent's native terminal UI. Open a worker to continue its conversation, inspect changed files, run a workspace shell, preview its app, or review pull requests. Compatible Claude Code and Codex sessions can switch between Chat and Terminal UI while preserving the native conversation and workspace.
 
 ## The orchestrator plans across the project
 
-The project orchestrator is AO's persistent planning and coordination agent. It works at the level above individual tasks: the product direction, technical strategy, priorities, and sequence of work across the repository.
+The project orchestrator is the persistent planning and coordination agent above individual workers. Use it to explore an idea, reason through tradeoffs, set priorities, and turn a larger outcome into focused tasks.
 
-Use the orchestrator to explore an idea before implementation, brainstorm product and technical approaches, reason through tradeoffs, identify high-impact work, and turn an ambiguous outcome into a concrete plan. Its project-scoped conversation preserves goals, decisions, constraints, and earlier reasoning. It combines that planning history with repository context and live AO state, including active workers, ownership, pull requests, CI, and reviews. This keeps planning grounded in both the project and the work already underway.
+Its project-scoped conversation keeps planning context alongside the current workers, pull requests, CI, and reviews. It can delegate work, pass workers relevant context, follow progress, and coordinate follow-ups. Workers handle implementation, tests, commits, and pull requests.
 
-When a plan becomes actionable, the orchestrator can break it into focused tasks, spawn or redirect workers, pass each worker the relevant context, follow their progress, and coordinate follow-up work. The orchestrator owns planning and delegation; workers own implementation, tests, commits, and pull requests.
+## Follow work from build to merge
 
-<img src="docs/assets/readme/orchestrator.png" alt="Agent Orchestrator coordinating multiple workers and passing them focused project context" width="100%" />
+The project board groups workers by their current phase. Card details keep agent activity, branch, pull requests, token usage, and recency together; multiple PRs stay attached to the same worker.
 
-## The Kanban keeps the system legible
+| Lane | What it shows |
+| --- | --- |
+| **Building** | Work being implemented, including workers waiting for input before a PR is ready. |
+| **Validating** | Workers addressing CI failures, review comments, or other validation work. |
+| **In review** | Pull requests waiting on checks or human review. |
+| **Ready** | Work that is approved, mergeable, or merged and awaiting archive. |
 
-Every worker appears on the same live board, whether you started it from **New task** or the orchestrator delegated it. AO derives each card's position from session, pull request, CI, and review facts, turning the Kanban into an operational view of the project:
+Session activity and PR facts determine the displayed state. Open a card to inspect the cause, answer the agent, or review the work. Per-session controls can automatically return CI failures and review feedback to the worker that owns them.
 
-- **Working:** workers that are actively implementing or ready for another instruction
-- **Needs you:** blocked sessions, missing input, failed CI, requested changes, or lost signals
-- **In review:** open and draft pull requests waiting on checks or review
-- **Ready to merge:** approved or mergeable work, with merged sessions kept visible until they are archived
+## Delegate from Linear
 
-Each card keeps the task, agent, branch, activity, pull request, and status together. Open it to inspect the conversation or terminal, changed files, PR summary, reviews, and preview. The board shows what is moving, what is blocked, and where your attention will have the most impact.
+**Settings → Integrations → Linear** connects Linear delegation to local workers. With the integration service and OAuth app configured, sign in, select an organization, connect a Linear workspace, and create an agent profile for a team, optional Linear project, and an existing local Lenticular project.
 
-<img src="docs/assets/readme/hero.png" alt="Agent Orchestrator Kanban showing worker sessions grouped by live status" width="100%" />
+The local runner receives delegated work and creates Chat sessions through the daemon. Follow-up instructions return to the same session, and completed turn text and failures are reported back to Linear. Approval and structured-input requests are answered in Lenticular. Keep the desktop running to receive work; pausing intake leaves existing tasks running.
 
-## One workflow, from idea to merge
+Profiles can be renamed, edited, paused, and resumed. Disconnecting a runner stops its connection. The bridge does not automatically mark issues Done, merge PRs, or approve agent requests.
 
-1. **Start at the right level.** Give a clear task directly to a worker, or develop a larger outcome with the project orchestrator and let it shape the plan.
-2. **Delegate focused work.** Start workers yourself or have the orchestrator create them with the context and ownership they need.
-3. **Build in isolation.** Every Git-backed worker gets its own branch and worktree; standalone agents get AO-managed branchless directories without requiring a project or repository.
-4. **Supervise live state.** AO follows agent activity, pull requests, CI, review feedback, and merge conflicts, then reflects those facts on the Kanban.
-5. **Close the feedback loop.** Inspect any worker directly, make project-level decisions with the orchestrator, and return actionable failures or review comments to the agent that owns the work.
+<img src="docs/assets/readme/lenticular-linear.png" alt="Lenticular Settings, Integrations, showing Linear's setup-required state when the integration service is unavailable" width="100%" />
 
-AO works with the coding agents and source-control workflow you already use. Agents keep their native strengths; AO supplies the project context, isolated execution, coordination, and operational view that make them work as a system.
+This is opt-in development functionality, not a preconfigured hosted service. See the [Linear settings and local setup guide](docs/linear-settings-implementation.md) for the local service, OAuth requirements, routing, and runner lifecycle, and the [bridge guide](docs/linear-local-bridge.md) for execution behavior and limitations.
 
-## Product highlights
+## More in the workspace
 
-<table>
-  <tr>
-    <td width="36%" valign="middle">
-      <h3>Pull requests and agent reviews</h3>
-      <p>Keep CI, mergeability, reviewer state, and interactive agent reviews beside the worker, then return requested changes to the same owner.</p>
-    </td>
-    <td width="64%">
-      <img src="docs/assets/readme/review.png" alt="Worker session with pull request, CI, and agent review state in Agent Orchestrator" width="100%" />
-    </td>
-  </tr>
-  <tr>
-    <td width="36%" valign="middle">
-      <h3>Agent-controllable browser</h3>
-      <p>Preview and inspect a worker's local app beside its interface. Browser profiles are isolated per worker so parallel UI tasks do not share state.</p>
-    </td>
-    <td width="64%">
-      <img src="docs/assets/readme/browser.png" alt="A worker controlling its isolated in-app browser preview" width="100%" />
-    </td>
-  </tr>
-  <tr>
-    <td width="36%" valign="middle">
-      <h3>Native interfaces, one supervisor</h3>
-      <p>Use structured Chat or the agent's native terminal UI while AO keeps task context, workspace state, and feedback in one place.</p>
-    </td>
-    <td width="64%">
-      <img src="docs/assets/readme/tui.png" alt="Agent terminal interface supervised inside Agent Orchestrator" width="100%" />
-    </td>
-  </tr>
-</table>
+- **Pull requests and reviews:** inspect CI, mergeability, review state, and interactive agent reviews beside the worker, including sessions with several PRs.
+- **Isolated browser previews:** each worker has its own browser profile, tabs, and popups. The refreshed browser toolbar keeps navigation and the current domain visible; agents can inspect and operate the preview with `ao browser`.
+- **Explicit preview targets:** use `ao preview <url>` inside a session to open its local app in the Browser panel. Detached Chromium DevTools can stay open alongside agent automation.
+- **Files and workspace shells:** inspect changed files and diffs, including untracked files in child repositories, without losing the session context.
+- **Notifications:** follow requests for input and PR outcomes through the notification center.
+- **Connect Mobile:** access sessions from the companion app over a trusted local network using the opt-in authenticated LAN listener.
+- **Agent settings:** manage harness readiness and Codex accounts, authentication, and usage from settings.
 
 ## Supported agents
 
-**27 coding agents supported** through one supervised workflow.
+Lenticular inherits AO's agent adapters, including Claude Code, Codex, Cursor, OpenCode, and the agents below. Chat, Terminal UI, and interactive-review support vary by agent; use the installed harness's supported capabilities.
 
 <table>
   <tr valign="middle">
@@ -172,70 +128,35 @@ AO works with the coding agents and source-control workflow you already use. Age
   <tr valign="middle">
     <td valign="middle" nowrap><img src="frontend/src/renderer/assets/agents/kimchi.svg" alt="Kimchi" width="24" height="24" align="middle" /> &nbsp; <b>Kimchi</b></td>
     <td valign="middle" nowrap><img src="docs/assets/readme/agents/prime-agent.svg" alt="Prime Agent" width="24" height="24" align="middle" /> &nbsp; <b>Prime Agent</b></td>
-    <td valign="middle" nowrap><img src="frontend/src/renderer/assets/agents/omp.png" alt="OMP" width="24" height="24" align="middle" /> &nbsp; <b>OMP</b></td>
+    <td valign="middle" nowrap></td>
   </tr>
 </table>
 
-[Browse agent setup guides →](https://orchestrator.inc/docs/plugins/agents)
-
-**Use the interface that fits the moment: structured Chat or the agent's native terminal UI.**
-
-## Report a bug
-
-[Open a bug report](https://github.com/Untrivial-ai/agent-orchestrator/issues/new?template=bug_report.yml) from your own GitHub account. A few sentences in your own words about what you did and what went wrong are enough. Add what you expected, reproduction steps, your AO version and OS, or a screenshot if you have them; these are helpful, not prerequisites.
-
-A local coding agent can help you clarify the report and gather evidence using the [bug-triage skill](.agents/skills/bug-triage/SKILL.md). Keep the issue body focused on your observations, with agent-collected logs, database excerpts, and investigation notes in separate attachments. Review any draft before submitting it under your own account. Please don't ask AO Bot to file issues on your behalf; reporter attribution matters.
-
-For help describing a problem, join the [bug-triaging channel on Discord](https://discord.com/channels/1476302178913357958/1491735678156013588). See [contribution guidance](CONTRIBUTING.md#bugs-and-features) for more detail.
+[Browse upstream agent setup guides →](https://aoagents.dev/docs/plugins/agents)
 
 ## Develop and contribute
 
-Contributions are welcome across code, docs, triage, examples, and tests.
+Start with the [development guide](docs/development.md) for prerequisites, local setup, and validation commands. Read [AGENTS.md](AGENTS.md) for this repository's architecture boundaries and [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance.
 
-```bash
-git clone https://github.com/Untrivial-ai/agent-orchestrator.git
-cd agent-orchestrator
-```
-
-Start with the [development guide](docs/development.md) for prerequisites, local setup, and test commands. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request, and use [GitHub Issues](https://github.com/Untrivial-ai/agent-orchestrator/issues) for bugs and feature requests.
+The Electron/React frontend is a supervisor over the local Go daemon. The daemon owns sessions, workspaces, lifecycle, storage, and agent execution. App state lives under `~/.ao`, with the documented environment overrides.
 
 ## Documentation
 
-| Document                                                         | Start here when you need                                                                     |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [Product documentation](https://orchestrator.inc/docs)                  | Installation, agent setup, and day-to-day product usage.                                     |
-| [docs/documentation-map.md](docs/documentation-map.md)           | Which docs are human-facing, which are machine-readable contracts, and which wins on drift.  |
-| [docs/architecture.md](docs/architecture.md)                     | Backend mental model, lifecycle, persistence, CDC, status derivation, and daemon boundaries. |
-| [docs/backend-code-structure.md](docs/backend-code-structure.md) | Package ownership and where each backend concern belongs.                                    |
-| [docs/cli/README.md](docs/cli/README.md)                         | CLI behavior and daemon route mapping.                                                       |
-| [docs/development.md](docs/development.md)                       | Prerequisites, build steps, running tests, and troubleshooting for local development.        |
-| [docs/STATUS.md](docs/STATUS.md)                                 | What currently ships on `main` and what remains in flight.                                   |
+| Document | What it covers |
+| --- | --- |
+| [Linear settings and setup](docs/linear-settings-implementation.md) | This fork's integration UI, local service, OAuth, profiles, and runner setup. |
+| [Linear execution bridge](docs/linear-local-bridge.md) | Delegation, follow-ups, stop handling, persistence, and known limitations. |
+| [Architecture](docs/architecture.md) | Daemon boundaries, lifecycle, persistence, and status derivation. |
+| [Backend code structure](docs/backend-code-structure.md) | Package ownership and implementation entry points. |
+| [CLI](docs/cli/README.md) | `ao` commands and daemon route mapping. |
+| [Development](docs/development.md) | Build, run, and test instructions. |
+| [Status](docs/STATUS.md) | Rewrite implementation status and remaining work. |
+| [Upstream product docs](https://aoagents.dev/docs) | AO installation, agent setup, and product usage. |
 
-## Follow the journey
+## Telemetry and privacy
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <a href="https://x.com/agent_wrapper/status/2026329204405723180">
-        <img src="assets/tweet2.png" height="330" alt="Agent Orchestrator journey update on X" />
-      </a>
-    </td>
-    <td width="50%" align="center">
-      <a href="https://x.com/agent_wrapper/status/2025986105485733945">
-        <img src="assets/tweet1.png" height="330" alt="Agent Orchestrator journey update on X" />
-      </a>
-    </td>
-  </tr>
-</table>
+See the [telemetry policy](docs/telemetry.md) for collection behavior and controls. Settings includes the option to share error events; environment policy can disable it.
 
-## Community
+## License and upstream
 
-Join [Discord](https://discord.com/invite/UZv7JjxbwG) for help and contributor discussion, follow [@ao_build](https://x.com/ao_build) for updates, or start a conversation in [GitHub Issues](https://github.com/Untrivial-ai/agent-orchestrator/issues).
-
-## Anonymous telemetry
-
-AO uses privacy-preserving product usage and reliability metrics designed to exclude PII and project content. These metrics help us understand adoption and improve the product. To understand which teams and developers get the most value from AO, we also record the GitHub organization or account that owns a project (the owner segment only, never the repository, path, or URL); for a personal repository this is the owner's own username, so that single field is not anonymous. We use it to prioritize improvements and reach out for feedback. [Learn more about telemetry and privacy](docs/telemetry.md).
-
-## License
-
-Agent Orchestrator is available under the [Apache License 2.0](LICENSE).
+Lenticular is a fork of Agent Orchestrator, available under the [Apache License 2.0](LICENSE). Upstream documentation, releases, and community resources belong to the [Agent Orchestrator project](https://github.com/Untrivial-ai/agent-orchestrator). The [translated READMEs](translations/) describe upstream AO and may not reflect this fork's changes.
