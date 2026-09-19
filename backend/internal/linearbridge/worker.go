@@ -206,7 +206,7 @@ func (w *Worker) daemon(ctx context.Context, method, path string, body, out any)
 		return errors.New("cannot read Lenticular run file")
 	}
 	if info == nil || info.Port < 1 || info.Port > 65535 {
-		return errors.New("Lenticular daemon is offline")
+		return errors.New("local daemon is offline")
 	}
 	_, err = doJSON(ctx, w.Client, method, fmt.Sprintf("http://127.0.0.1:%d/api/v1%s", info.Port, path), "", body, out)
 	return err

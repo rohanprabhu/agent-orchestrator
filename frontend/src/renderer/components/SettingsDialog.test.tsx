@@ -114,6 +114,15 @@ describe("SettingsDialog", () => {
 		expect(screen.queryByRole("button", { name: "Downloads" })).not.toBeInTheDocument();
 	});
 
+	it("keeps Integrations accessible when Cloud execution is unavailable", async () => {
+		useUiStore.getState().openGlobalSettings("integrations");
+		renderSettingsDialog();
+
+		expect(await screen.findByTestId("global-settings-section")).toHaveTextContent("integrations");
+		expect(screen.getByRole("button", { name: "Integrations" })).toHaveAttribute("aria-current", "page");
+		expect(screen.queryByRole("button", { name: "Cloud" })).not.toBeInTheDocument();
+	});
+
 	it("falls back to General when Cloud is unavailable", async () => {
 		useUiStore.getState().openGlobalSettings("cloud");
 		renderSettingsDialog();
