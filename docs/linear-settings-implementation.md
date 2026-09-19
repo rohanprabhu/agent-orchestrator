@@ -64,7 +64,7 @@ upstream deployment scripts and domains are not used by this local workflow.
 ## Hosted deployment configuration
 
 Deploy the updated `ao-cloud` binary and PostgreSQL migration
-`00032_linear_integrations.sql`. The service must already have Lenticular authentication,
+`00040_linear_integrations.sql`. The service must already have Lenticular authentication,
 organization membership, and `AO_CLOUD_PROVIDER_SECRET_KEY` configured (the
 existing provider encryption key). Configure a Lenticular-owned Linear OAuth app:
 
