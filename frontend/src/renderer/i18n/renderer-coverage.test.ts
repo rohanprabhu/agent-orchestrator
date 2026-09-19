@@ -28,7 +28,7 @@ const approvedLiterals: Record<string, readonly string[]> = {
 		"Tracker intake is not available for scratch projects.",
 	],
 	"components/SessionInspector.tsx": ["PR #"],
-	"components/Sidebar.tsx": ["Agent Orchestrator", "daemon"],
+	"components/Sidebar.tsx": ["Lenticular", "daemon"],
 	"components/WindowTitlebar.tsx": [
 		"Alt+F4",
 		"Ctrl+Z",
