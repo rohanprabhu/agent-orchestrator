@@ -52,6 +52,7 @@ import (
 	chatsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/chat"
 	devimportsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/devimport"
 	importsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/importer"
+	linear "github.com/aoagents/agent-orchestrator/backend/internal/service/linearintegration"
 	notificationsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/notification"
 	prsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/pr"
 	projectsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/project"
@@ -737,6 +738,12 @@ func Run() error {
 
 	bs.HostID = hostIdentity.HostID
 
+	linearManager, linearErr := linear.New(ctx, cfg.DataDir, cfg.CloudControlPlaneURL, cfg.RunFilePath)
+	if linearErr != nil {
+		log.Warn("Linear runner settings unavailable", "error", linearErr)
+	} else {
+		defer linearManager.Close()
+	}
 	srv, err := httpd.NewWithDeps(cfg, log, termMgr, httpd.APIDeps{
 		Projects:           projectSvc,
 		HostID:             hostIdentity.HostID,
@@ -760,6 +767,7 @@ func Run() error {
 		AgentAuth:          agentAuthSvc,
 		Conversations:      chatSvc,
 		Settings:           settingsSvc,
+		Linear:             linearManager,
 		CDC:                store,
 		Events:             cdcPipe.Broadcaster,
 		Activity:           lcStack.LCM,

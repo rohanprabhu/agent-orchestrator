@@ -15,6 +15,7 @@ import (
 	"github.com/aoagents/agent-orchestrator/backend/internal/httpd/envelope"
 	"github.com/aoagents/agent-orchestrator/backend/internal/ports"
 	"github.com/aoagents/agent-orchestrator/backend/internal/presence"
+	linear "github.com/aoagents/agent-orchestrator/backend/internal/service/linearintegration"
 	prsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/pr"
 	projectsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/project"
 	reviewsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/review"
@@ -22,6 +23,7 @@ import (
 
 // APIDeps bundles every service the API layer's controllers depend on.
 type APIDeps struct {
+	Linear             *linear.Manager
 	Agents             controllers.AgentCatalog
 	CodexAccounts      controllers.CodexAccountService
 	Projects           projectsvc.Manager
@@ -117,6 +119,7 @@ type API struct {
 	shellTerms    *controllers.ShellTerminalsController
 	conversations *controllers.ConversationsController
 	settings      *controllers.SettingsController
+	linear        *controllers.LinearController
 	dev           *controllers.DevController
 	browser       *controllers.BrowserController
 	system        *controllers.SystemController
@@ -159,6 +162,7 @@ func NewAPI(cfg config.Config, deps APIDeps) *API {
 		shellTerms:    &controllers.ShellTerminalsController{Svc: deps.ShellTerminals},
 		conversations: &controllers.ConversationsController{Svc: deps.Conversations},
 		settings:      &controllers.SettingsController{Svc: deps.Settings},
+		linear:        &controllers.LinearController{Manager: deps.Linear, Projects: deps.Projects},
 		dev:           &controllers.DevController{Import: deps.DevImport},
 		browser:       &controllers.BrowserController{Svc: deps.Browser},
 		system:        &controllers.SystemController{Checks: deps.SystemChecks},
@@ -198,6 +202,7 @@ func (a *API) Register(root chi.Router) {
 			a.shellTerms.Register(r)
 			a.conversations.Register(r)
 			a.settings.Register(r)
+			a.linear.Register(r)
 			a.dev.Register(r)
 			a.browser.Register(r)
 			a.system.Register(r)

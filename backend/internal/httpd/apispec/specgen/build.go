@@ -143,6 +143,10 @@ func schemaName(_ reflect.Type, defaultName string) string {
 // by projectOperations(). Add an entry when a new contract type is introduced;
 // the drift test fails until the spec is regenerated, which flags the gap.
 var schemaNames = map[string]string{ //nolint:gosec // Public OpenAPI type names include reset-credit contracts; no credential value is stored here.
+	"ControllersLinearRunnerResponse":                      "LinearRunnerResponse",
+	"ControllersLinearRunnersResponse":                     "LinearRunnersResponse",
+	"ControllersPrepareLinearRunnerRequest":                "PrepareLinearRunnerRequest",
+	"ControllersActivateLinearRunnerRequest":               "ActivateLinearRunnerRequest",
 	"ControllersSettingsResponse":                          "SettingsResponse",
 	"ControllersDesktopWorkspaceLocationResponse":          "DesktopWorkspaceLocationResponse",
 	"ControllersUpdateSessionInterfaceRequest":             "UpdateSessionInterfaceRequest",
@@ -694,6 +698,11 @@ func usageOperations() []operation {
 // shells the user opens by hand, with no agent session behind them.
 func shellTerminalOperations() []operation {
 	return []operation{
+		{method: http.MethodGet, path: "/api/v1/settings/integrations/linear/runners", id: "listLinearRunners", tag: "settings", summary: "List this machine's Linear runners", resps: []respUnit{{http.StatusOK, controllers.LinearRunnersResponse{}}, {http.StatusNotImplemented, envelope.APIError{}}}},
+		{method: http.MethodPost, path: "/api/v1/settings/integrations/linear/runners", id: "prepareLinearRunner", tag: "settings", summary: "Prepare a local Linear runner", reqBody: controllers.PrepareLinearRunnerRequest{}, resps: []respUnit{{http.StatusCreated, controllers.LinearRunnerResponse{}}, {http.StatusBadRequest, envelope.APIError{}}, {http.StatusNotImplemented, envelope.APIError{}}}},
+		{method: http.MethodPost, path: "/api/v1/settings/integrations/linear/runners/{runnerId}/activate", id: "activateLinearRunner", pathParams: []any{controllers.LinearRunnerIDParam{}}, tag: "settings", summary: "Verify and activate a Linear runner", reqBody: controllers.ActivateLinearRunnerRequest{}, resps: []respUnit{{http.StatusOK, controllers.LinearRunnerResponse{}}, {http.StatusBadRequest, envelope.APIError{}}, {http.StatusNotImplemented, envelope.APIError{}}}},
+		{method: http.MethodDelete, path: "/api/v1/settings/integrations/linear/runners/{runnerId}", id: "disconnectLinearRunner", pathParams: []any{controllers.LinearRunnerIDParam{}}, tag: "settings", summary: "Disconnect a local Linear runner", resps: []respUnit{{http.StatusNoContent, nil}, {http.StatusBadRequest, envelope.APIError{}}, {http.StatusNotImplemented, envelope.APIError{}}}},
+
 		{
 			method: http.MethodGet, path: "/api/v1/settings", id: "getSettings", tag: "settings",
 			summary: "Read the daemon-owned user preferences",

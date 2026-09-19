@@ -1,3 +1,4 @@
+import { LinearIntegrationSection } from "./settings/LinearIntegrationSection";
 import { lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import type { GlobalSettingsSection as GlobalSettingsPage } from "../stores/ui-store";
@@ -49,6 +50,7 @@ export function GlobalSettingsForm({
 			{(all || section === "agents") && <CodexAccountsSection titleHidden={titleHidden} />}
 
 			{(all || section === "browserProfiles") && <BrowserProfilesSection titleHidden={titleHidden} />}
+			{(all || section === "integrations") && <LinearIntegrationSection titleHidden={titleHidden} />}
 			{(all || section === "cloud") && <CloudCredentialsSection titleHidden={titleHidden} />}
 
 			{(all || section === "mobile") && (

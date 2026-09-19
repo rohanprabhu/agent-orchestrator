@@ -6193,6 +6193,119 @@ paths:
       summary: Turn the cloud offering on or off for this machine
       tags:
       - settings
+  /api/v1/settings/integrations/linear/runners:
+    get:
+      operationId: listLinearRunners
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinearRunnersResponse'
+          description: OK
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: List this machine's Linear runners
+      tags:
+      - settings
+    post:
+      operationId: prepareLinearRunner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareLinearRunnerRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinearRunnerResponse'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Prepare a local Linear runner
+      tags:
+      - settings
+  /api/v1/settings/integrations/linear/runners/{runnerId}:
+    delete:
+      operationId: disconnectLinearRunner
+      parameters:
+      - in: path
+        name: runnerId
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Disconnect a local Linear runner
+      tags:
+      - settings
+  /api/v1/settings/integrations/linear/runners/{runnerId}/activate:
+    post:
+      operationId: activateLinearRunner
+      parameters:
+      - in: path
+        name: runnerId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateLinearRunnerRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinearRunnerResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Verify and activate a Linear runner
+      tags:
+      - settings
   /api/v1/settings/session-interface:
     patch:
       operationId: updateSessionInterface
@@ -6626,6 +6739,13 @@ components:
           type: string
       required:
       - activeBranchId
+      type: object
+    ActivateLinearRunnerRequest:
+      properties:
+        profileId:
+          type: string
+      required:
+      - profileId
       type: object
     AddProjectInput:
       properties:
@@ -9272,6 +9392,40 @@ components:
       - ok
       - sessionId
       type: object
+    LinearRunnerResponse:
+      properties:
+        active:
+          type: boolean
+        challenge:
+          type: string
+        error:
+          type: string
+        id:
+          type: string
+        lastContact:
+          format: date-time
+          type: string
+        profileId:
+          type: string
+        projectId:
+          type: string
+      required:
+      - id
+      - profileId
+      - projectId
+      - challenge
+      - active
+      - lastContact
+      type: object
+    LinearRunnersResponse:
+      properties:
+        runners:
+          items:
+            $ref: '#/components/schemas/LinearRunnerResponse'
+          type: array
+      required:
+      - runners
+      type: object
     ListAgentAuthPlansResponse:
       properties:
         plans:
@@ -9784,6 +9938,13 @@ components:
       - title
       - targetSha
       - status
+      type: object
+    PrepareLinearRunnerRequest:
+      properties:
+        projectId:
+          type: string
+      required:
+      - projectId
       type: object
     PreviewServerStatusResponse:
       properties:

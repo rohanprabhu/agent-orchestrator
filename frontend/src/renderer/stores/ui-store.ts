@@ -26,6 +26,7 @@ export type GlobalSettingsSection =
 	| "mobile"
 	| "shortcuts"
 	| "browserProfiles"
+	| "integrations"
 	| "updates"
 	| "help";
 
