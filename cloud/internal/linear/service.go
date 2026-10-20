@@ -360,6 +360,7 @@ func (s *Service) Run(ctx context.Context) {
 			if ctx.Err() != nil {
 				return
 			}
+			s.Reconcile(ctx, org)
 			_ = s.Store.LinearUpdate(ctx, nil, org, func(st *State) error {
 				if s.processEvent(ctx, org, st) {
 					return nil

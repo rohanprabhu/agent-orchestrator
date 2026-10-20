@@ -114,6 +114,11 @@ func (s *Service) Webhook(ctx context.Context, body []byte, signature string) er
 			return nil
 		}
 		if task := st.Tasks[event.Session.ID]; task != nil && kind != "message" {
+			// Created deliveries are duplicates; only an explicit follow-up or recovery
+			// scan may retry an unbound task with an authoritative route.
+			if kind == "create" {
+				return nil
+			}
 			// Stop supersedes a lease immediately; other follow-ups preserve order.
 			st.Enqueue(event.Session.ID, connection, "", "", id, kind, body)
 			return nil
@@ -159,16 +164,34 @@ func (s *Service) processEvent(ctx context.Context, org string, st *State) bool 
 			return true
 		}
 		if e.Action == "prompted" {
-			if st.Tasks[e.Session.ID] != nil {
+			task := st.Tasks[e.Session.ID]
+			if task != nil && task.ProfileID != "" {
 				st.Enqueue(e.Session.ID, c.ID, "", "", id, "message", e.Activity.Content.Body)
 				delete(st.Events, id)
 				return true
 			}
-			if time.Since(time.UnixMilli(e.Timestamp)) > 24*time.Hour {
-				delete(st.Events, id)
+			if time.Now().Before(c.RetryAt) {
+				continue
 			}
-			continue
+			token, err := s.access(ctx, org, c)
+			var remote *recoverySession
+			if err == nil {
+				remote, err = s.recoverySession(ctx, token, e.Session.ID)
+			}
+			if err != nil {
+				c.Error = "Linear session recovery failed; retrying automatically."
+				c.RetryAt = time.Now().Add(time.Minute)
+				return true
+			}
+			st.recoverSession(c, remote, id)
+			// Include the triggering prompt even if Linear's activity read is lagging.
+			if task = st.Tasks[e.Session.ID]; task != nil && task.ProfileID != "" {
+				st.Enqueue(e.Session.ID, c.ID, "", "", id, "message", e.Activity.Content.Body)
+			}
+			delete(st.Events, id)
+			return true
 		}
+
 		if st.Tasks[e.Session.ID] != nil {
 			delete(st.Events, id)
 			return true

@@ -67,9 +67,12 @@ type Resource struct {
 	Name string `json:"name"`
 }
 type Connection struct {
-	ID        string   `json:"id"`
-	Workspace Resource `json:"workspace"`
-	Agent     struct {
+	RecoveryCursor string
+	NextRecoveryAt time.Time
+	LastRecoveryAt time.Time
+	ID             string   `json:"id"`
+	Workspace      Resource `json:"workspace"`
+	Agent          struct {
 		ID          string `json:"id"`
 		Name        string `json:"name"`
 		DisplayName string `json:"displayName"`
@@ -107,10 +110,12 @@ type Command struct {
 	Done  bool      `json:"done"`
 }
 type Task struct {
-	ProfileID    string
-	ConnectionID string
-	Stopped      bool
-	Commands     []*Command
+	Retryable     bool
+	InitialPrompt string
+	ProfileID     string
+	ConnectionID  string
+	Stopped       bool
+	Commands      []*Command
 }
 type Report struct {
 	ID   string `json:"id"`
@@ -189,7 +194,7 @@ func (s *State) SaveProfile(p Profile, owner string) (*Profile, error) {
 }
 func (s *State) Enqueue(task, connection, team, project, id, kind, body string) {
 	t := s.Tasks[task]
-	if t == nil {
+	if t == nil || (kind == "create" && s.retryableTask(task)) {
 		if kind != "create" {
 			return
 		}
@@ -206,13 +211,17 @@ func (s *State) Enqueue(task, connection, team, project, id, kind, body string) 
 				match = p
 			}
 		}
-		if match == nil || match.Paused {
-			s.Tasks[task] = &Task{ConnectionID: connection}
-			s.Report(Report{ID: id + ":unrouted", Task: task, Kind: "error", Body: "Lenticular has no enabled profile for this team/project. Configure Linear in Lenticular Settings → Integrations, then delegate a new session."})
+		if match == nil || match.Paused || match.Suspended {
+			s.Tasks[task] = &Task{ConnectionID: connection, Retryable: true, InitialPrompt: body}
+			s.Report(Report{ID: id + ":unrouted", Task: task, Kind: "error", Body: "Lenticular has no enabled profile for this team/project. Configure Linear in Lenticular Settings → Integrations, then reply here to retry."})
 			return
 		}
 		t = &Task{ProfileID: match.ID, ConnectionID: connection}
 		s.Tasks[task] = t
+	}
+	if t.ProfileID == "" && kind == "message" {
+		s.Report(Report{ID: id + ":unrouted", Task: task, Kind: "error", Body: "This session has no local runner. Configure its profile and reply here to retry."})
+		return
 	}
 	for _, c := range t.Commands {
 		if c.ID == id {

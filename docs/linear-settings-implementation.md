@@ -118,6 +118,36 @@ settings-based reconciliation UI, arbitrary native agent renaming, model/harness
 selection per profile, and moving active work between machines are not included.
 The worker uses Lenticular's default chat harness and the normal local permission flow.
 
+## Offline recovery and retrying an unrouted session
+
+The integration service polls Linear agent sessions when it starts and after each
+completed scan (a one-minute interval). It pages through sessions for the installed
+app user and reads their full activity history. Missed session creation and
+follow-up prompts enter the same durable mailbox as webhooks, using the same
+session/activity IDs so repeated scans and webhook deliveries do not duplicate
+commands. Pagination progress survives service restarts; failed reads retry without
+advancing the cursor. Each scan page has a bounded request budget.
+
+Recovery checks the current issue delegation, issue state, session dismissal, and
+stop activities before queueing work. Stopped, dismissed, completed, canceled, or
+no-longer-delegated work is not started. Incomplete activity history fails closed.
+A stopped session keeps a durable tombstone so a late create cannot resurrect it.
+Existing task/profile bindings remain fixed. Pausing intake blocks new work while
+follow-ups to already bound tasks can still be recovered.
+
+If a session was rejected because no enabled profile matched, configuring its
+profile allows catch-up to route it. Replying in that session also rechecks the
+route and recovers the original request context; older rejected sessions are
+recognized from their persisted rejection reports. If the profile is still
+missing, the reply receives an error instead of an unclaimable message command.
+
+For local development, polling needs an outbound connection to Linear but no
+webhook tunnel. Nothing executes while both the integration service and desktop
+runner are stopped. Catch-up resumes when the service runs, and queued commands
+wait for the runner. Polling is eventual, not an always-online acknowledgement:
+Linear may show a session as stale while Lenticular is offline. This does not add
+a cloud deployment or recover arbitrary non-session issue assignments.
+
 ## Pilot transition
 
 The env-configured `ao-linear-bridge` pilot remains available. Its single-scope
