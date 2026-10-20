@@ -1222,6 +1222,7 @@
 	"shell.newSession": "新しいセッション",
 	"shell.openNewAgent": "Open a new agent",
 	"shell.newTask": "新しいタスク",
+	"shell.forkBadge": "AO フォーク",
 	"shell.nightly": "nightly",
 	"shell.dev": "dev",
 	"shell.openInspector": "インスペクターパネルを開く",

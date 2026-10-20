@@ -1222,6 +1222,7 @@
 	"shell.newSession": "Neue Sitzung",
 	"shell.openNewAgent": "Open a new agent",
 	"shell.newTask": "Neue Aufgabe",
+	"shell.forkBadge": "AO-Fork",
 	"shell.nightly": "nightly",
 	"shell.dev": "dev",
 	"shell.openInspector": "Inspektor-Panel öffnen",

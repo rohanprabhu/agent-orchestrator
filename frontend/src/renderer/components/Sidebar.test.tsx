@@ -455,6 +455,13 @@ afterEach(() => {
 });
 
 describe("Sidebar", () => {
+	it("identifies the Lenticular fork in the persistent sidebar chrome", () => {
+		renderSidebar();
+
+		expect(screen.getByText("Lenticular")).toBeInTheDocument();
+		expect(screen.getByText("AO fork")).toBeInTheDocument();
+	});
+
 	it("shows the cloud sign-in entry point while signed out", () => {
 		cloudSessionState.configured = true;
 		renderSidebar();

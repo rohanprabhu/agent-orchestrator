@@ -710,7 +710,10 @@ export function Sidebar({
 					<span
 						className="sidebar-expanded-chrome min-w-0 flex-1 truncate text-sm font-bold leading-tight tracking-tight-lg text-foreground group-data-[collapsible=icon]:hidden"
 					>
-						Agent Orchestrator
+						Lenticular
+					</span>
+					<span className="sidebar-expanded-chrome shrink-0 rounded-full border border-purple-accent/25 bg-purple-subtle px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-[0.12em] text-purple-accent group-data-[collapsible=icon]:hidden">
+						{t("shell.forkBadge")}
 					</span>
 					{isNightly && (
 						<span className="sidebar-expanded-chrome shrink-0 rounded-full bg-purple-subtle px-1.5 py-0.5 text-micro font-semibold leading-none text-purple-accent group-data-[collapsible=icon]:hidden">

@@ -1222,6 +1222,7 @@
 	"shell.newSession": "새 세션",
 	"shell.openNewAgent": "Open a new agent",
 	"shell.newTask": "새 작업",
+	"shell.forkBadge": "AO 포크",
 	"shell.nightly": "nightly",
 	"shell.dev": "dev",
 	"shell.openInspector": "인스펙터 패널 열기",

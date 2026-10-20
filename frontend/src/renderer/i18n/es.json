@@ -1243,6 +1243,7 @@
 	"shell.newSession": "Nueva sesión",
 	"shell.openNewAgent": "Open a new agent",
 	"shell.newTask": "Nueva tarea",
+	"shell.forkBadge": "Fork de AO",
 	"shell.nightly": "nightly",
 	"shell.dev": "dev",
 	"shell.openInspector": "Abrir panel del inspector",

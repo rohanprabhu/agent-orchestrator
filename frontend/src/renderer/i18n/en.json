@@ -1356,6 +1356,7 @@
 	"shell.newSession": "New session",
 	"shell.openNewAgent": "Open a new agent",
 	"shell.newTask": "New task",
+	"shell.forkBadge": "AO fork",
 	"shell.nightly": "nightly",
 	"shell.dev": "dev",
 	"shell.openInspector": "Open inspector panel",
